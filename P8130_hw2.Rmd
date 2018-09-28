@@ -1,0 +1,219 @@
+---
+title: "P8130_hw2"
+author: "Zhiqian Fang zf2212"
+date: "9/25/2018"
+output: html_document
+---
+
+_Load library and clean up workspace_
+```{r}
+library(tidyverse)
+
+rm(list=ls())
+```
+
+_Import data_
+```{r}
+migraine_data = readxl::read_xlsx("./Migraine.xlsx") %>% 
+  janitor::clean_names()
+```
+
+_Creat subsets of NDDIE and CSED_
+```{r}
+nddie_16up = filter(migraine_data, nddie >= 16)
+nddie_16low = filter(migraine_data, nddie < 16)
+cesd_16up = filter(migraine_data, cesd >= 16)
+cesd_16low = filter(migraine_data, cesd < 16)
+```
+
+### Summarize the three variables for epilepsy patients with and without migraine
+
+
+_Summary of CESD_
+```{r}
+sum_cesd = migraine_data %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(cesd, na.rm = TRUE),
+    sd = sd(cesd, na.rm = TRUE),
+    med = median(cesd, na.rm = TRUE),
+    max = max(cesd, na.rm = TRUE),
+    min = min(cesd, na.rm = TRUE),
+    missval = sum(is.na.data.frame(cesd)),
+    samp_size = length((cesd)[!is.na(cesd)])
+  )
+sum_cesd
+```
+
+
+_Summary of CESD lower than 16_
+```{r}
+sum_cesd_16low = cesd_16low %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(cesd, na.rm = TRUE),
+    sd = sd(cesd, na.rm = TRUE),
+    med = median(cesd, na.rm = TRUE),
+    max = max(cesd, na.rm = TRUE),
+    min = min(cesd, na.rm = TRUE),
+    missval = sum(is.na.data.frame(cesd)),
+    samp_size = length((cesd)[!is.na(cesd)])
+    )
+sum_cesd_16low
+```
+
+
+_Summary of CESD higher than 16_
+
+
+```{r}
+sum_cesd_16up = cesd_16up %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(cesd, na.rm = TRUE),
+    sd = sd(cesd, na.rm = TRUE),
+    med = median(cesd, na.rm = TRUE),
+    max = max(cesd, na.rm = TRUE),
+    min = min(cesd, na.rm = TRUE),
+    missval = sum(is.na.data.frame(cesd)),
+    samp_size = length((cesd)[!is.na(cesd)])
+    ) 
+sum_cesd_16up
+```
+
+
+_Summary of NDDIE_
+```{r}
+sum_nddie = migraine_data %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(nddie, na.rm = TRUE),
+    sd = sd(nddie, na.rm = TRUE),
+    med = median(nddie, na.rm = TRUE),
+    max = max(nddie, na.rm = TRUE),
+    min = min(nddie, na.rm = TRUE),
+    missval = sum(is.na.data.frame(nddie)),
+    samp_size = length((nddie)[!is.na(nddie)])
+  ) 
+sum_nddie
+```
+
+
+_Summary of NDDIE lower than 16_
+```{r}
+sum_nddie_16low = nddie_16low %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(nddie, na.rm = TRUE),
+    sd = sd(nddie, na.rm = TRUE),
+    med = median(nddie, na.rm = TRUE),
+    max = max(nddie, na.rm = TRUE),
+    min = min(nddie, na.rm = TRUE),
+    missval = sum(is.na.data.frame(nddie)),
+    samp_size = length((nddie)[!is.na(nddie)])
+  )
+sum_nddie_16low
+```
+
+
+_Summary of NDDIE higher than 16_
+```{r}
+sum_nddie_16up = nddie_16up %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(nddie, na.rm = TRUE),
+    sd = sd(nddie, na.rm = TRUE),
+    med = median(nddie, na.rm = TRUE),
+    max = max(nddie, na.rm = TRUE),
+    min = min(nddie, na.rm = TRUE),
+    missval = sum(is.na.data.frame(nddie)),
+    samp_size = length((nddie)[!is.na(nddie)])
+  ) 
+sum_nddie_16up
+```
+
+
+_Summary of abnas memory_
+```{r}
+abnas_memory = migraine_data %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(abnas_memory, na.rm = TRUE),
+    sd = sd(abnas_memory, na.rm = TRUE),
+    med = median(abnas_memory, na.rm = TRUE),
+    max = max(abnas_memory, na.rm = TRUE),
+    min = min(abnas_memory, na.rm = TRUE),
+    missval = sum(is.na.data.frame(abnas_memory)),
+    samp_size = length((abnas_memory)[!is.na(abnas_memory)])
+  )
+abnas_memory
+```
+
+
+_Summary of abnas language_
+```{r}
+abnas_language = migraine_data %>% 
+  group_by(., migraine) %>% 
+  summarise(
+    mean = mean(abnas_language, na.rm = TRUE),
+    sd = sd(abnas_memory, na.rm = TRUE),
+    med = median(abnas_memory, na.rm = TRUE),
+    max = max(abnas_memory, na.rm = TRUE),
+    min = min(abnas_memory, na.rm = TRUE),
+    missval = sum(is.na.data.frame(abnas_memory)),
+    samp_size = length((abnas_memory)[!is.na(abnas_memory)])
+  )
+abnas_language
+``` 
+
+### Historgram 
+
+
+
+```{r Histogram of CESD}
+hist(subset(migraine_data, migraine == '0')$cesd, xlim = c(0, 50), ylim = c(0, 120), xlab = "", col = "dodgerblue1",  main = "")
+par(new = TRUE)
+hist(subset(migraine_data, migraine == '1')$cesd, xlim = c(0, 50), ylim = c(0, 120), xlab = "Score", col = "dodgerblue4", main = "Histogram of CESD")
+legend("topright", pch = c(15,15), col = c("dodgerblue1", "dodgerblue4"),
+       legend = c("No Migraine", "Migraine"))
+
+```
+
+
+
+
+```{r Histogram of NDDIE}
+hist(subset(migraine_data, migraine == '0')$nddie, xlim = c(0, 25), ylim = c(0, 100), breaks = 15, xlab = "", col = "goldenrod4",  main = "")
+par(new = TRUE)
+hist(subset(migraine_data, migraine == '1')$nddie, xlim = c(0, 25), ylim = c(0, 100), breaks = 15, xlab = "Score", col = "goldenrod1", main = "Histogram of NDDIE")
+legend("topright", pch = c(15,15), col = c("goldenrod4", "goldenrod1"),
+       legend = c("No Migraine", "Migraine"))
+```
+
+
+
+
+```{r Histogram of abnas memory}
+hist(subset(migraine_data, migraine == '0')$abnas_memory, xlim = c(0, 15), ylim = c(0, 160), breaks = 17, xlab = "", col = "aquamarine4",  main = "")
+par(new = TRUE)
+hist(subset(migraine_data, migraine == '1')$abnas_memory, xlim = c(0, 15), ylim = c(0, 160), breaks = 17, xlab = "Score", col = "aquamarine1", main = "Histogram of abnas memory")
+legend("topright", pch = c(15,15), col = c("aquamarine4", "aquamarine1"),
+       legend = c("No Migraine", "Migraine"))
+```
+
+
+
+
+```{r Histogram of abnas language}
+hist(subset(migraine_data, migraine == '0')$abnas_language, xlim = c(0, 10), ylim = c(0, 160), breaks = 10, xlab = "", col = "darkslategrey",  main = "")
+par(new = TRUE)
+hist(subset(migraine_data, migraine == '1')$abnas_language, xlim = c(0, 10), ylim = c(0, 160), breaks = 10, xlab = "Score", col = "darkslategray4", main = "Histogram of abnas language")
+legend("topright", pch = c(15,15), col = c("darkslategrey", "darkslategray4"),
+       legend = c("No Migraine", "Migraine"))
+```
+
+
+
+
+
+
